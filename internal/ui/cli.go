@@ -88,7 +88,7 @@ func PickMessageForm(suggestions []string) (string, error) {
 }
 
 func CommitMessageForm() (bool, error) {
-	var isCommit bool
+	isCommit := true
 
 	form := huh.NewForm(
 		huh.NewGroup(
