@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/charmbracelet/huh"
 )
@@ -45,7 +46,7 @@ func FormConfig() (Config, error) {
 
 	err := form.Run()
 	if err != nil {
-		return userChoices, fmt.Errorf("Error running CLI form (Ask for commit config) %v\n", err)
+		return userChoices, fmt.Errorf("Error displaying commit config form: %v\n", err)
 	}
 
 	return userChoices, nil
@@ -77,7 +78,12 @@ func PickMessage(suggestions []string) (string, error) {
 
 	err := form.Run()
 	if err != nil {
-		return selected, fmt.Errorf("Error running CLI form (Pick generated message) %v\n", err)
+		return selected, fmt.Errorf("Error showing commit message suggestions: %v\n", err)
+	}
+
+	if selected == "Cancel" {
+		fmt.Fprintf(os.Stderr, "Selection cancelled: %v\n", err)
+		os.Exit(1)
 	}
 
 	return selected, nil
