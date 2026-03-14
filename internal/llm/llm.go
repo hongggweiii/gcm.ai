@@ -1,9 +1,13 @@
 package llm
 
+import (
+	"context"
+)
+
 type CommitSuggestions struct {
-	Options []string `json:"options"` // Map field to key "options"
+	Suggestions []string `json:"suggestions"` // Map field to key "suggestions"
 }
 
 type AIProvider interface {
-	GenerateSuggestions(diff string, isConventional bool, isSingleLine bool) ([]string, error)
+	GenerateSuggestions(ctx context.Context, diff string, isConventional bool, isSingleLine bool) ([]string, error)
 }
