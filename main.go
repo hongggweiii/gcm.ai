@@ -50,8 +50,7 @@ func main() {
 
 	fmt.Printf("isConventional: %t\n", choices.IsConventional)
 	fmt.Printf("isSingleLine: %t\n", choices.IsSingleLine)
-	fmt.Printf("Suggestions given: %s\n", suggestions)
-	fmt.Printf("Selected commit message: %s\n", selected)
+	fmt.Printf("Selected commit message: %s\n\n\n", selected)
 
 	if isCommit {
 		isSuccess, err := gitTool.CommitMessage(selected)
@@ -61,7 +60,7 @@ func main() {
 		}
 
 		if isSuccess {
-			fmt.Println("Changes are successfully committed")
+			fmt.Println("\nChanges are successfully committed")
 		}
 	}
 }
