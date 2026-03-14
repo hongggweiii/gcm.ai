@@ -45,8 +45,40 @@ func FormConfig() (Config, error) {
 
 	err := form.Run()
 	if err != nil {
-		return userChoices, fmt.Errorf("Error running CLI form %v\n", err)
+		return userChoices, fmt.Errorf("Error running CLI form (Ask for commit config) %v\n", err)
 	}
 
 	return userChoices, nil
+}
+
+func PickMessage(suggestions []string) (string, error) {
+	var selected string
+
+	// Set options to be a Option of AI-generated commit message
+	options := []huh.Option[string]{
+		huh.NewOption("Cancel", "Cancel"),
+	}
+
+	for _, msg := range suggestions {
+		options = append(options, huh.NewOption(msg, msg))
+	}
+
+	form := huh.NewForm(
+		huh.NewGroup(
+			huh.NewSelect[string]().
+				Title("Select one generated commit message").
+				Options(
+					options...,
+				).
+				Height(6).
+				Value(&selected),
+		),
+	)
+
+	err := form.Run()
+	if err != nil {
+		return selected, fmt.Errorf("Error running CLI form (Pick generated message) %v\n", err)
+	}
+
+	return selected, nil
 }
