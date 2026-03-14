@@ -9,7 +9,7 @@ import (
 
 type GitProvider interface {
 	GetStagedDiff() (string, error)
-	CommitMessage(message string) error
+	CommitMessage(message string) (bool, error)
 }
 
 type localGit struct{}
@@ -35,7 +35,7 @@ func (g *localGit) GetStagedDiff() (string, error) {
 	return diff, nil
 }
 
-func (g *localGit) CommitMessage(message string) error {
+func (g *localGit) CommitMessage(message string) (bool, error) {
 	cmd := exec.Command("git", "commit", "-m", message)
 
 	// Piping Git console outputs to user terminal
@@ -44,8 +44,8 @@ func (g *localGit) CommitMessage(message string) error {
 
 	err := cmd.Run()
 	if err != nil {
-		return fmt.Errorf("Error committing message: %v\n", err)
+		return false, fmt.Errorf("Error committing message: %v\n", err)
 	}
 
-	return nil
+	return true, nil
 }

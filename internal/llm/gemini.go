@@ -2,6 +2,7 @@ package llm
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"google.golang.org/genai"
@@ -41,7 +42,7 @@ func (c *GeminiClient) GenerateSuggestions(ctx context.Context, diff string, isC
 	reqConfig := c.config
 	reqConfig.SystemInstruction = genai.NewContentFromText(finalPrompt, "user")
 
-	suggestions, err := client.Models.GenerateContent(
+	response, err := client.Models.GenerateContent(
 		ctx,
 		c.model,
 		genai.Text(diff),
@@ -51,7 +52,14 @@ func (c *GeminiClient) GenerateSuggestions(ctx context.Context, diff string, isC
 	if err != nil {
 		fmt.Printf("Gemini unable to generate content: %v", err)
 	}
-	fmt.Println(suggestions.Text())
 
-	return []string{suggestions.Text()}, err
+	var suggestions CommitSuggestions
+
+	// Extract JSON string from GenerateContentResponse wrapper
+	rawText := response.Text()
+	if err := json.Unmarshal([]byte(rawText), &suggestions); err != nil {
+		return nil, fmt.Errorf("Failed to parse JSON: %w", err)
+	}
+
+	return suggestions.Suggestions, err
 }
