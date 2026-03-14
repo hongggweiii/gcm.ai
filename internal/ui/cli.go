@@ -13,7 +13,7 @@ type Config struct {
 	IsSingleLine   bool
 }
 
-func FormConfig() (Config, error) {
+func ConfigForm() (Config, error) {
 	// Setting default values so 'Yes' gets highlighted first
 	userChoices := Config{
 		IsConventional: true,
@@ -52,11 +52,11 @@ func FormConfig() (Config, error) {
 	return userChoices, nil
 }
 
-func PickMessage(suggestions []string) (string, error) {
+func PickMessageForm(suggestions []string) (string, error) {
 	var selected string
 
 	// Populate suggestions into form options
-	options := []huh.Option[string]{}
+	var options []huh.Option[string]
 	for _, msg := range suggestions {
 		options = append(options, huh.NewOption(msg, msg))
 	}
@@ -85,4 +85,33 @@ func PickMessage(suggestions []string) (string, error) {
 	}
 
 	return selected, nil
+}
+
+func CommitMessageForm() (bool, error) {
+	var isCommit bool
+
+	form := huh.NewForm(
+		huh.NewGroup(
+			huh.NewSelect[bool]().
+				Title("Would you like to commit?").
+				Options(
+					huh.NewOption("Yes", true),
+					huh.NewOption("No", false),
+				).
+				Height(6).
+				Value(&isCommit),
+		),
+	)
+
+	err := form.Run()
+	if err != nil {
+		return isCommit, fmt.Errorf("Error showing commit message suggestions: %v\n", err)
+	}
+
+	if !isCommit {
+		fmt.Fprintf(os.Stderr, "Changes are not committed: %v\n", err)
+		os.Exit(1)
+	}
+
+	return isCommit, nil
 }
