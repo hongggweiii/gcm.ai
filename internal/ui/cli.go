@@ -55,14 +55,12 @@ func FormConfig() (Config, error) {
 func PickMessage(suggestions []string) (string, error) {
 	var selected string
 
-	// Set options to be a Option of AI-generated commit message
-	options := []huh.Option[string]{
-		huh.NewOption("Cancel", "Cancel"),
-	}
-
+	// Populate suggestions into form options
+	options := []huh.Option[string]{}
 	for _, msg := range suggestions {
 		options = append(options, huh.NewOption(msg, msg))
 	}
+	options = append(options, huh.NewOption("Cancel", "Cancel"))
 
 	form := huh.NewForm(
 		huh.NewGroup(
